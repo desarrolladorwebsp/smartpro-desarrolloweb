@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+:root {
+  --sp-ink: #101024;
+  --sp-magenta: #f14fb6;
+  --sp-pink: #ec22b8;
+  --sp-violet: #8b3dff;
+  --sp-blue: #00bdf3;
+  --sp-cyan: #00c8ff;
+  --sp-white: #ffffff;
+  --sp-surface: #f8fafc;
+  --sp-muted: #667085;
+  --sp-line: #e5e7eb;
+  --sp-success: #22c55e;
+  --sp-gradient-primary: linear-gradient(90deg, #f14fb6 0%, #8b3dff 50%, #00bdf3 100%);
+  --sp-gradient-button: linear-gradient(90deg, #ec22b8 0%, #8b3dff 50%, #00bdf3 100%);
+  --sp-gradient-action: linear-gradient(100deg, #4f46e5 0%, #0891b2 100%);
+  --sp-gradient-soft: linear-gradient(135deg, #fff0fa 0%, #f0f9ff 100%);
+  --sp-gradient-text: linear-gradient(90deg, #ec22b8 0%, #00bdf3 100%);
+  --sp-ease: cubic-bezier(0.32, 0.72, 0, 1);
+  --sp-radius-card: 1.5rem;
+  --sp-radius-control: 999px;
+  --sp-radius-input: 1rem;
+  --z-float: 30;
+  --z-header: 40;
+  --z-overlay: 50;
+}
+
+@theme inline {
+  --color-sp-ink: #101024;
+  --color-sp-magenta: #f14fb6;
+  --color-sp-pink: #ec22b8;
+  --color-sp-violet: #8b3dff;
+  --color-sp-blue: #00bdf3;
+  --color-sp-cyan: #00c8ff;
+  --color-sp-white: #ffffff;
+  --color-sp-surface: #f8fafc;
+  --color-sp-muted: #667085;
+  --color-sp-line: #e5e7eb;
+  --color-sp-success: #22c55e;
+  --background-image-sp-gradient-primary: var(--sp-gradient-primary);
+  --background-image-sp-gradient-button: var(--sp-gradient-button);
+  --background-image-sp-gradient-action: var(--sp-gradient-action);
+  --background-image-sp-gradient-soft: var(--sp-gradient-soft);
+  --background-image-sp-gradient-text: var(--sp-gradient-text);
+  --font-sans: var(--font-manrope);
+  --shadow-sp-card: 0 18px 40px -24px rgb(16 16 36 / 0.28);
+  --shadow-sp-soft: 0 10px 28px -18px rgb(16 16 36 / 0.18);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+body {
+  background: var(--sp-white);
+  color: var(--sp-ink);
+}
+
+.sp-text-gradient {
+  background-image: var(--sp-gradient-text);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.sp-hero-overlay {
+  background: linear-gradient(90deg, rgb(255 255 255 / 0.98) 0%, rgb(255 255 255 / 0.94) 30%, rgb(255 255 255 / 0.72) 48%, rgb(255 255 255 / 0.1) 72%, transparent 100%);
+}
+
+@media (max-width: 767px) {
+  .sp-hero-overlay {
+    background: linear-gradient(180deg, rgb(255 255 255 / 0.98) 0%, rgb(255 255 255 / 0.92) 34%, rgb(255 255 255 / 0.42) 58%, transparent 82%);
+  }
+}
