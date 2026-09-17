@@ -1,0 +1,8 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/smartpro/applications/desarrolloweb/
+    - /bin/mkdir -p $DEPLOYPATH
+    - /bin/cp -R app components lib public package.json package-lock.json next.config.ts postcss.config.mjs tsconfig.json server.js $DEPLOYPATH
+    - /usr/local/bin/npm ci --prefix $DEPLOYPATH
+    - /usr/local/bin/npm run build --prefix $DEPLOYPATH
