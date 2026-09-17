@@ -5,4 +5,8 @@ deployment:
     - /bin/mkdir -p $DEPLOYPATH
     - /bin/cp -R app components lib public package.json package-lock.json next.config.ts postcss.config.mjs tsconfig.json server.js $DEPLOYPATH
     - /usr/local/bin/npm ci --prefix $DEPLOYPATH
-    - /usr/local/bin/npm run build --prefix $DEPLOYPATH
+    - /bin/rm -rf $DEPLOYPATH/.next
+    - /bin/cp -R .next/standalone $DEPLOYPATH/.next
+    - /bin/mkdir -p $DEPLOYPATH/.next/static
+    - /bin/cp -R .next/static/. $DEPLOYPATH/.next/static/
+    - /bin/cp -R public/. $DEPLOYPATH/public/

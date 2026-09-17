@@ -12,7 +12,12 @@
 /coverage
 
 # next.js
-/.next/
+/.next/*
+!/.next/standalone/
+!/.next/standalone/**
+!/.next/static/
+!/.next/static/**
+/out/
 /out/
 
 # production
