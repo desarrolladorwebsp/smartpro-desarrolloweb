@@ -1,21 +1,23 @@
+import crypto from "node:crypto";
 import { NextResponse } from "next/server";
 
 import { buildContactWhatsAppMessage, validateContactPayload, type ContactPayload } from "@/lib/contact";
+import { SERVICE_SLUG } from "@/lib/catalog";
 import { getWhatsAppUrl } from "@/lib/site-content";
+import { createLead, isSmartProConfigured, SmartProError } from "@/lib/smartpro";
 
 /**
- * Integración de contacto
+ * Formulario de contacto.
  *
- * 1. El formulario valida en cliente y servidor.
- * 2. Si existe CONTACT_WEBHOOK_URL, se envía un POST JSON al webhook
- *    (Resend, Make, n8n, Slack o el endpoint de SmartPro).
- * 3. Si no hay backend configurado, se responde con un fallback a WhatsApp
- *    para no perder el lead.
+ * Cada envío crea un cliente potencial en el CRM de SmartPro, marcado con
+ * interés en Desarrollo Web. Si el correo ya existe, SmartPro reutiliza la
+ * ficha en lugar de duplicarla.
  *
- * Variables de entorno:
- * - CONTACT_WEBHOOK_URL
- * - CONTACT_WEBHOOK_TOKEN (opcional, se manda como Bearer)
+ * Si SmartPro no está configurado o no responde, se devuelve un enlace a
+ * WhatsApp para no perder el contacto.
  */
+export const runtime = "nodejs";
+
 export async function POST(request: Request) {
   let body: ContactPayload;
 
@@ -31,48 +33,56 @@ export async function POST(request: Request) {
     email: String(body.email ?? ""),
     company: String(body.company ?? ""),
     project: String(body.project ?? ""),
+    planId: body.planId ? String(body.planId) : undefined,
   };
 
   const errors = validateContactPayload(payload);
+
   if (Object.keys(errors).length > 0) {
     return NextResponse.json({ ok: false, errors, message: "Revisa los campos marcados." }, { status: 400 });
   }
 
-  const webhook = process.env.CONTACT_WEBHOOK_URL;
-  const token = process.env.CONTACT_WEBHOOK_TOKEN;
+  if (!isSmartProConfigured()) {
+    return whatsappFallback(payload, "Aún no hay conexión con SmartPro. Te abrimos WhatsApp para no perder tu mensaje.");
+  }
 
-  if (webhook) {
-    const response = await fetch(webhook, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  try {
+    const lead = await createLead({
+      contact: {
+        email: payload.email.trim(),
+        contactName: payload.name.trim(),
+        companyName: payload.company.trim() || undefined,
+        phone: payload.phone.trim(),
       },
-      body: JSON.stringify({
-        source: "desarrolloweb.smartpro.cl",
-        ...payload,
-      }),
+      interest: { serviceSlug: SERVICE_SLUG, ...(payload.planId ? { planId: payload.planId } : {}) },
+      message: payload.project.trim(),
+      idempotencyKey: crypto.randomUUID(),
     });
-
-    if (!response.ok) {
-      return NextResponse.json(
-        { ok: false, message: "No pudimos entregar el mensaje al servidor de contacto." },
-        { status: 502 },
-      );
-    }
 
     return NextResponse.json({
       ok: true,
       delivered: true,
-      message: "Recibimos tu mensaje. Te contactaremos a la brevedad.",
+      message: lead.created
+        ? "Recibimos tu mensaje. Te contactaremos a la brevedad."
+        : "Actualizamos tu solicitud. Te contactaremos a la brevedad.",
     });
-  }
+  } catch (error) {
+    if (error instanceof SmartProError) {
+      console.error(`[smartpro] lead ${error.code} (${error.requestId}): ${error.message}`);
+    } else {
+      console.error("[smartpro] No se pudo registrar el lead:", error);
+    }
 
+    return whatsappFallback(payload, "No pudimos registrar tu mensaje. Te abrimos WhatsApp para que no se pierda.");
+  }
+}
+
+function whatsappFallback(payload: ContactPayload, message: string) {
   return NextResponse.json({
     ok: true,
     delivered: false,
     fallback: "whatsapp",
     whatsappUrl: getWhatsAppUrl(buildContactWhatsAppMessage(payload)),
-    message: "Aún no hay correo configurado. Te abrimos WhatsApp para no perder tu mensaje.",
+    message,
   });
 }

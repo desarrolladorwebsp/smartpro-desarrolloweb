@@ -42,16 +42,34 @@
       "namedRegex": "^/_not\\-found(?:/)?$"
     },
     {
+      "page": "/api/checkout",
+      "regex": "^/api/checkout(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/checkout(?:/)?$"
+    },
+    {
       "page": "/api/contact",
       "regex": "^/api/contact(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/api/contact(?:/)?$"
     },
     {
+      "page": "/api/smartpro/webhook",
+      "regex": "^/api/smartpro/webhook(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/smartpro/webhook(?:/)?$"
+    },
+    {
       "page": "/icon.svg",
       "regex": "^/icon\\.svg(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/icon\\.svg(?:/)?$"
+    },
+    {
+      "page": "/pago/resultado",
+      "regex": "^/pago/resultado(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/pago/resultado(?:/)?$"
     }
   ],
   "dataRoutes": [],

@@ -60,6 +60,7 @@ export function ContactSection() {
 
   const searchParams = useSearchParams();
   const selectedPlan = searchParams.get("plan") ?? "";
+  const selectedPlanId = searchParams.get("planId") ?? "";
 
   const update = (field: keyof ContactPayload, value: string) => {
     setForm((current) => ({ ...current, [field]: value }));
@@ -68,9 +69,10 @@ export function ContactSection() {
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const payload = {
+    const payload: ContactPayload = {
       ...form,
       project: selectedPlan && !form.project.includes(selectedPlan) ? `${form.project}\nPlan de interés: ${selectedPlan}`.trim() : form.project,
+      ...(selectedPlanId ? { planId: selectedPlanId } : {}),
     };
     const nextErrors = validateContactPayload(payload);
     setErrors(nextErrors);

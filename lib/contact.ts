@@ -4,6 +4,9 @@ export type ContactPayload = {
   email: string;
   company: string;
   project: string;
+  /// Plan que venía en la URL cuando el visitante pidió cotización. Viaja al
+  /// CRM para que el ejecutivo sepa qué estaba mirando.
+  planId?: string;
 };
 
 export type ContactFieldErrors = Partial<Record<keyof ContactPayload, string>>;

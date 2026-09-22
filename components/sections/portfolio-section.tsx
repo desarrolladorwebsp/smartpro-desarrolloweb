@@ -7,22 +7,25 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 
 import { Container } from "@/components/ui/container";
 import { Reveal } from "@/components/ui/reveal";
-import { PORTFOLIO } from "@/lib/site-content";
+import type { WebProject } from "@/lib/catalog";
 
-const FILTERS = ["Todos", "Landing Pages", "Websites", "E-commerce", "Corporativos", "Servicios"] as const;
+const ALL = "Todos";
 
-export function PortfolioSection() {
-  const [activeFilter, setActiveFilter] = useState<(typeof FILTERS)[number]>("Todos");
+export function PortfolioSection({ projects }: { projects: WebProject[] }) {
+  const [activeFilter, setActiveFilter] = useState(ALL);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [visibleCount, setVisibleCount] = useState(1);
   const [isPaused, setIsPaused] = useState(false);
   const touchStartX = useRef<number | null>(null);
 
-  const filteredPortfolio = useMemo(() => {
-    if (activeFilter === "Todos") return PORTFOLIO;
-    const categoryMap: Record<string, string> = { "Landing Pages": "Landing Page", Websites: "Sitio web corporativo", "E-commerce": "E-commerce", Corporativos: "Sitio web corporativo", Servicios: "Servicios profesionales" };
-    return PORTFOLIO.filter((project) => project.category === categoryMap[activeFilter]);
-  }, [activeFilter]);
+  /// Los filtros salen de las categorías que realmente tienen proyectos, para
+  /// que agregar uno en SmartPro no deje un filtro vacío ni falte otro.
+  const filters = useMemo(() => [ALL, ...new Set(projects.map((project) => project.category).filter(Boolean))], [projects]);
+
+  const filteredPortfolio = useMemo(
+    () => (activeFilter === ALL ? projects : projects.filter((project) => project.category === activeFilter)),
+    [activeFilter, projects],
+  );
 
   const maxIndex = Math.max(0, filteredPortfolio.length - visibleCount);
   const safeIndex = Math.min(currentIndex, maxIndex);
@@ -41,6 +44,8 @@ export function PortfolioSection() {
     return () => window.clearInterval(interval);
   }, [isPaused, maxIndex, showNavigation]);
 
+  if (projects.length === 0) return null;
+
   const gridColumns = visibleCount === 1 ? "grid-cols-1" : visibleCount === 2 ? "grid-cols-2" : "grid-cols-3";
 
   return (
@@ -52,9 +57,11 @@ export function PortfolioSection() {
           <p className="mx-auto mt-4 max-w-2xl text-sm leading-relaxed text-sp-muted md:text-base">Hemos ayudado a marcas y empresas a tener presencia digital efectiva, con sitios web modernos, funcionales y enfocados en resultados.</p>
         </Reveal>
 
-        <div className="mt-8 flex flex-wrap items-center justify-center gap-2" role="group" aria-label="Filtrar proyectos">
-          {FILTERS.map((filter) => { const isActive = activeFilter === filter; return <button key={filter} type="button" aria-pressed={isActive} onClick={() => { setActiveFilter(filter); setCurrentIndex(0); }} className={`rounded-full border px-4 py-2 text-xs font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sp-violet focus-visible:ring-offset-2 ${isActive ? "border-transparent bg-sp-gradient-button text-sp-white shadow-sp-soft" : "border-sp-line bg-sp-white text-sp-muted hover:border-sp-violet hover:text-sp-violet"}`}>{filter}</button>; })}
-        </div>
+        {filters.length > 2 ? (
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-2" role="group" aria-label="Filtrar proyectos">
+            {filters.map((filter) => { const isActive = activeFilter === filter; return <button key={filter} type="button" aria-pressed={isActive} onClick={() => { setActiveFilter(filter); setCurrentIndex(0); }} className={`rounded-full border px-4 py-2 text-xs font-bold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sp-violet focus-visible:ring-offset-2 ${isActive ? "border-transparent bg-sp-gradient-button text-sp-white shadow-sp-soft" : "border-sp-line bg-sp-white text-sp-muted hover:border-sp-violet hover:text-sp-violet"}`}>{filter}</button>; })}
+          </div>
+        ) : null}
 
         <div className="mx-auto mt-10 flex max-w-7xl items-center justify-center gap-3 sm:gap-5" onMouseEnter={() => setIsPaused(true)} onMouseLeave={() => setIsPaused(false)} onFocusCapture={() => setIsPaused(true)} onBlurCapture={() => setIsPaused(false)} onTouchStart={(event) => { touchStartX.current = event.touches[0]?.clientX ?? null; setIsPaused(true); }} onTouchEnd={(event) => { const start = touchStartX.current; const end = event.changedTouches[0]?.clientX; touchStartX.current = null; setIsPaused(false); if (start === null || end === undefined || Math.abs(end - start) < 45 || !showNavigation) return; setCurrentIndex((index) => end < start ? Math.min(maxIndex, index + 1) : Math.max(0, index - 1)); }}>
           {showNavigation ? <button type="button" aria-label="Proyectos anteriores" disabled={safeIndex === 0} onClick={() => setCurrentIndex((index) => Math.max(0, index - 1))} className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-sp-line bg-sp-white text-sp-ink shadow-sp-soft transition hover:border-sp-violet hover:text-sp-violet disabled:pointer-events-none disabled:opacity-30"><ArrowLeft className="h-5 w-5" /></button> : null}

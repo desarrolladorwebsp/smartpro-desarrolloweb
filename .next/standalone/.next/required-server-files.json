@@ -64,7 +64,16 @@
           "search": ""
         }
       ],
-      "remotePatterns": [],
+      "remotePatterns": [
+        {
+          "protocol": "https",
+          "hostname": "smartpro.cl"
+        },
+        {
+          "protocol": "https",
+          "hostname": "www.smartpro.cl"
+        }
+      ],
       "qualities": [
         75
       ],
