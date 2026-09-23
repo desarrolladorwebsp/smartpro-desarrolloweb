@@ -16,34 +16,53 @@ const ICONS: Record<string, typeof Globe> = {
   "e-commerce": ShoppingBag,
 };
 
+const PLAN_SPECS = [
+  ["Páginas", "sectionsOrPages"],
+  ["SEO", "seo"],
+  ["Integraciones", "integrations"],
+  ["Soporte", "support"],
+] as const;
+
 function ModalPlanCard({ plan, onBuy }: { plan: WebPlan; onBuy: (plan: WebPlan) => void }) {
   return (
-    <article className={`flex min-w-0 flex-col rounded-3xl p-[2px] transition duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] hover:-translate-y-2 hover:shadow-2xl ${plan.highlighted ? "bg-sp-gradient-primary shadow-sp-card hover:brightness-105" : "bg-sp-violet/25 hover:bg-sp-gradient-primary"}`}>
-      <div className="flex h-full min-h-[480px] flex-col rounded-[calc(1.5rem-1px)] bg-sp-white p-5 transition duration-500 sm:p-6">
-        {plan.badge ? <p className="w-fit rounded-full bg-sp-gradient-button px-3 py-1 text-[11px] font-extrabold text-sp-white">{plan.badge}</p> : null}
-        <h3 className="mt-3 text-xl font-extrabold text-sp-ink">{plan.name}</h3>
-        <p className="mt-1 text-xs font-semibold text-sp-muted">{plan.category}</p>
-        <p className="mt-4 text-3xl font-extrabold text-sp-ink">{formatPlanPrice(plan)} <span className="text-sm font-semibold text-sp-muted">{plan.tax}</span></p>
-        <p className="mt-2 text-sm leading-relaxed text-sp-muted">{plan.note}</p>
-        <div className="mt-5 flex-1 divide-y divide-sp-line/80">
-          <div className="flex justify-between gap-3 py-2 text-sm"><span className="text-sp-muted">Secciones o páginas</span><strong className="text-right text-sp-ink">{plan.sectionsOrPages}</strong></div>
-          <div className="flex justify-between gap-3 py-2 text-sm"><span className="text-sp-muted">SEO</span><strong className="text-right text-sp-ink">{plan.seo}</strong></div>
-          <div className="flex justify-between gap-3 py-2 text-sm"><span className="text-sp-muted">Integraciones</span><strong className="text-right text-sp-ink">{plan.integrations}</strong></div>
-          <div className="flex justify-between gap-3 py-2 text-sm"><span className="text-sp-muted">Soporte</span><strong className="text-right text-sp-ink">{plan.support}</strong></div>
+    <article className={`flex h-full min-w-0 flex-col rounded-[1.35rem] p-px shadow-sp-soft transition duration-300 hover:shadow-sp-card ${plan.highlighted ? "bg-sp-gradient-primary" : "bg-sp-line"}`}>
+      <div className="flex h-full flex-col rounded-[calc(1.35rem-1px)] bg-sp-white p-3.5 sm:p-4">
+        <div className="flex min-h-6 items-start justify-between gap-2">
+          <h3 className="text-base font-extrabold leading-tight text-sp-ink sm:text-lg">{plan.name}</h3>
+          {plan.badge ? <p className="shrink-0 rounded-full bg-sp-gradient-button px-2.5 py-1 text-[10px] font-extrabold uppercase tracking-wide text-sp-white">{plan.badge}</p> : null}
         </div>
-        <ul className="mt-4 space-y-1.5 text-sm text-sp-ink">
-          {plan.extras.slice(0, 4).map((extra) => <li key={extra} className="flex gap-2"><Check className="mt-0.5 h-4 w-4 shrink-0 text-sp-violet" />{extra}</li>)}
+        <p className="mt-2 text-2xl font-extrabold leading-none text-sp-ink">{formatPlanPrice(plan)} <span className="text-xs font-semibold text-sp-muted">{plan.tax}</span></p>
+        <p className="mt-2 line-clamp-2 min-h-8 text-xs leading-snug text-sp-muted">{plan.note}</p>
+        <dl className="mt-3 grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+          {PLAN_SPECS.map(([label, key]) => (
+            <div key={key} className="rounded-xl bg-sp-surface px-2.5 py-1.5">
+              <dt className="text-[10px] font-bold uppercase tracking-wide text-sp-muted">{label}</dt>
+              <dd className="mt-0.5 line-clamp-2 text-xs font-extrabold leading-snug text-sp-ink">{plan[key]}</dd>
+            </div>
+          ))}
+        </dl>
+        <ul className="mt-3 flex-1 space-y-1 text-xs leading-snug text-sp-ink">
+          {plan.extras.slice(0, 4).map((extra) => (
+            <li key={extra} className="flex gap-1.5">
+              <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-sp-violet" strokeWidth={2.5} />
+              <span className="line-clamp-2">{extra}</span>
+            </li>
+          ))}
         </ul>
-        {plan.purchasable ? (
-          <button type="button" onClick={() => onBuy(plan)} className={buttonLinkClassName("primary", "mt-6 w-full border-0 !bg-sp-gradient-action shadow-sp-soft hover:-translate-y-1 hover:scale-[1.04] hover:shadow-2xl hover:brightness-110")}>
-            Contratar ahora
-          </button>
-        ) : (
-          <>
-            <ButtonLink href={`/?plan=${encodeURIComponent(plan.name)}&planId=${encodeURIComponent(plan.id)}#contacto`} variant="primary" className="mt-6 w-full border-0 !bg-sp-gradient-action shadow-sp-soft hover:-translate-y-1 hover:scale-[1.04] hover:shadow-2xl hover:brightness-110">Solicitar cotización</ButtonLink>
-            <p className="mt-2 text-center text-[11px] text-sp-muted">El alcance se define contigo antes de cobrar.</p>
-          </>
-        )}
+        <div className="mt-3">
+          {plan.purchasable ? (
+            <button type="button" onClick={() => onBuy(plan)} className={buttonLinkClassName("primary", "w-full border-0 !min-h-10 !bg-sp-gradient-action !px-4 !text-xs shadow-sp-soft hover:brightness-110")}>
+              Contratar ahora
+            </button>
+          ) : (
+            <ButtonLink href={`/?plan=${encodeURIComponent(plan.name)}&planId=${encodeURIComponent(plan.id)}#contacto`} variant="primary" className="w-full border-0 !min-h-10 !bg-sp-gradient-action !px-4 !text-xs shadow-sp-soft hover:brightness-110">
+              Solicitar cotización
+            </ButtonLink>
+          )}
+          <p className={`mt-1.5 min-h-4 text-center text-[10px] leading-tight text-sp-muted ${plan.purchasable ? "invisible" : ""}`}>
+            El alcance se define contigo antes de cobrar.
+          </p>
+        </div>
       </div>
     </article>
   );
@@ -127,9 +146,26 @@ export function SolutionsSection({ solutions }: { solutions: WebSolution[] }) {
         {modalOpen ? (
           <motion.div className="fixed inset-0 z-50 flex items-center justify-center bg-sp-ink/70 p-4 backdrop-blur-sm sm:p-6" role="dialog" aria-modal="true" aria-labelledby="planes-modal-title" id="planes-modal" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onMouseDown={(event) => { if (event.target === event.currentTarget) setModalOpen(false); }}>
             <motion.div className="relative flex max-h-[92svh] w-full max-w-7xl flex-col overflow-hidden rounded-[2rem] bg-sp-surface shadow-2xl" initial={{ opacity: 0, y: 28, scale: 0.97 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0, y: 18, scale: 0.97 }} transition={{ duration: 0.35, ease: [0.32, 0.72, 0, 1] }}>
-              <div className="flex items-center justify-between gap-4 border-b border-sp-line bg-sp-white px-5 py-4 sm:px-8 sm:py-5"><div><p className="text-xs font-extrabold uppercase tracking-[0.2em] text-sp-violet">Planes disponibles</p><h2 id="planes-modal-title" className="mt-1 text-2xl font-extrabold text-sp-ink sm:text-3xl">Planes de {selected.name}</h2></div><button type="button" aria-label="Cerrar planes" onClick={() => setModalOpen(false)} className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-sp-line bg-sp-white text-sp-ink transition hover:border-sp-violet hover:text-sp-violet"><X className="h-5 w-5" /></button></div>
-              <div className="flex min-h-0 flex-1 items-center justify-center gap-3 overflow-y-auto px-4 py-6 sm:gap-5 sm:px-8 sm:py-8" onTouchStart={(event) => { touchStartX.current = event.touches[0]?.clientX ?? null; }} onTouchEnd={(event) => { const start = touchStartX.current; const end = event.changedTouches[0]?.clientX; touchStartX.current = null; if (start === null || end === undefined || Math.abs(end - start) < 45 || !showNavigation) return; setCurrentIndex((index) => end < start ? Math.min(maxIndex, index + visibleCount) : Math.max(0, index - visibleCount)); }}>{showNavigation ? <button type="button" aria-label="Planes anteriores" disabled={safeIndex === 0} onClick={() => setCurrentIndex((index) => Math.max(0, index - visibleCount))} className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-sp-line bg-sp-white text-sp-ink shadow-sp-soft transition hover:border-sp-violet hover:text-sp-violet disabled:pointer-events-none disabled:opacity-30"><ArrowLeft className="h-5 w-5" /></button> : null}<div className="min-w-0 flex-1"><div className={`grid gap-5 ${visibleCount === 1 ? "grid-cols-1" : visibleCount === 2 ? "grid-cols-2" : "grid-cols-3"} ${!showNavigation ? "mx-auto max-w-5xl" : ""}`}><AnimatePresence mode="popLayout" initial={false}>{categoryPlans.slice(safeIndex, safeIndex + visibleCount).map((plan) => <motion.div key={plan.id} layout initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.3 }}><ModalPlanCard plan={plan} onBuy={setCheckoutPlan} /></motion.div>)}</AnimatePresence></div></div>{showNavigation ? <button type="button" aria-label="Siguientes planes" disabled={safeIndex >= maxIndex} onClick={() => setCurrentIndex((index) => Math.min(maxIndex, index + visibleCount))} className="grid h-11 w-11 shrink-0 place-items-center rounded-full border border-sp-line bg-sp-white text-sp-ink shadow-sp-soft transition hover:border-sp-violet hover:text-sp-violet disabled:pointer-events-none disabled:opacity-30"><ArrowRight className="h-5 w-5" /></button> : null}</div>
-              <div className="flex items-center justify-center gap-2 border-t border-sp-line bg-sp-white px-5 py-4">{Array.from({ length: Math.ceil(categoryPlans.length / visibleCount) }).map((_, index) => <button key={index} type="button" aria-label={`Ir al grupo ${index + 1}`} onClick={() => setCurrentIndex(Math.min(index * visibleCount, maxIndex))} className={`h-2 rounded-full transition-all ${Math.floor(safeIndex / visibleCount) === index ? "w-8 bg-sp-gradient-button" : "w-2 bg-sp-line hover:bg-sp-violet/50"}`} />)}</div>
+              <div className="flex items-center justify-between gap-4 border-b border-sp-line bg-sp-white px-5 py-3 sm:px-8">
+                <h2 id="planes-modal-title" className="sp-text-gradient text-2xl font-extrabold sm:text-3xl">Planes de {selected.name}</h2>
+                <button type="button" aria-label="Cerrar planes" onClick={() => setModalOpen(false)} className="grid h-10 w-10 shrink-0 place-items-center rounded-full border border-sp-line bg-sp-white text-sp-ink transition hover:border-sp-violet hover:text-sp-violet"><X className="h-5 w-5" /></button>
+              </div>
+              <div className="flex min-h-0 flex-1 items-start justify-center gap-3 overflow-y-auto px-3 py-3 sm:gap-4 sm:px-6" onTouchStart={(event) => { touchStartX.current = event.touches[0]?.clientX ?? null; }} onTouchEnd={(event) => { const start = touchStartX.current; const end = event.changedTouches[0]?.clientX; touchStartX.current = null; if (start === null || end === undefined || Math.abs(end - start) < 45 || !showNavigation) return; setCurrentIndex((index) => end < start ? Math.min(maxIndex, index + visibleCount) : Math.max(0, index - visibleCount)); }}>
+                {showNavigation ? <button type="button" aria-label="Planes anteriores" disabled={safeIndex === 0} onClick={() => setCurrentIndex((index) => Math.max(0, index - visibleCount))} className="grid h-11 w-11 shrink-0 self-center place-items-center rounded-full border border-sp-line bg-sp-white text-sp-ink shadow-sp-soft transition hover:border-sp-violet hover:text-sp-violet disabled:pointer-events-none disabled:opacity-30"><ArrowLeft className="h-5 w-5" /></button> : null}
+                <div className="min-w-0 flex-1">
+                  <div className={`grid items-stretch gap-3 sm:gap-4 ${visibleCount === 1 ? "grid-cols-1" : visibleCount === 2 ? "grid-cols-2" : "grid-cols-3"} ${!showNavigation ? "mx-auto max-w-5xl" : ""}`}>
+                    <AnimatePresence mode="popLayout" initial={false}>
+                      {categoryPlans.slice(safeIndex, safeIndex + visibleCount).map((plan) => (
+                        <motion.div key={plan.id} className="h-full" layout initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.3 }}>
+                          <ModalPlanCard plan={plan} onBuy={setCheckoutPlan} />
+                        </motion.div>
+                      ))}
+                    </AnimatePresence>
+                  </div>
+                </div>
+                {showNavigation ? <button type="button" aria-label="Siguientes planes" disabled={safeIndex >= maxIndex} onClick={() => setCurrentIndex((index) => Math.min(maxIndex, index + visibleCount))} className="grid h-11 w-11 shrink-0 self-center place-items-center rounded-full border border-sp-line bg-sp-white text-sp-ink shadow-sp-soft transition hover:border-sp-violet hover:text-sp-violet disabled:pointer-events-none disabled:opacity-30"><ArrowRight className="h-5 w-5" /></button> : null}
+              </div>
+              <div className="flex items-center justify-center gap-2 border-t border-sp-line bg-sp-white px-5 py-2.5">{Array.from({ length: Math.ceil(categoryPlans.length / visibleCount) }).map((_, index) => <button key={index} type="button" aria-label={`Ir al grupo ${index + 1}`} onClick={() => setCurrentIndex(Math.min(index * visibleCount, maxIndex))} className={`h-2 rounded-full transition-all ${Math.floor(safeIndex / visibleCount) === index ? "w-8 bg-sp-gradient-button" : "w-2 bg-sp-line hover:bg-sp-violet/50"}`} />)}</div>
             </motion.div>
           </motion.div>
         ) : null}

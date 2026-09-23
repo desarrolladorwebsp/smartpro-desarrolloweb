@@ -2,8 +2,8 @@
   "/_not-found/page": "/_not-found",
   "/_global-error/page": "/_global-error",
   "/icon.svg/route": "/icon.svg",
-  "/api/smartpro/webhook/route": "/api/smartpro/webhook",
   "/api/contact/route": "/api/contact",
+  "/api/smartpro/webhook/route": "/api/smartpro/webhook",
   "/api/checkout/route": "/api/checkout",
   "/page": "/",
   "/pago/resultado/page": "/pago/resultado"
