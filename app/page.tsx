@@ -8,9 +8,10 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { loadPortfolio, loadSolutions } from "@/lib/catalog-server";
 
-/// Planes, precios y proyectos vienen del catálogo de SmartPro. Se revalidan
-/// solos, así que un cambio en el panel se ve aquí sin volver a desplegar.
-export const revalidate = 300;
+/// Cada visita lee el catálogo en el servidor. Si esta página se prerenderiza,
+/// un build sin credenciales queda cacheado vacío y el visitante no ve planes
+/// ni portafolio aunque después se configuren las variables.
+export const dynamic = "force-dynamic";
 
 export default async function Home() {
   const [solutions, projects] = await Promise.all([loadSolutions(), loadPortfolio()]);
@@ -18,7 +19,7 @@ export default async function Home() {
   return (
     <>
       <SiteHeader />
-      <main>
+      <main data-smartpro-plans={solutions.length} data-smartpro-projects={projects.length}>
         <HeroSection />
         <SolutionsSection solutions={solutions} />
         <PortfolioSection projects={projects} />

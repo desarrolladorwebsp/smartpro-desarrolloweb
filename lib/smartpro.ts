@@ -26,6 +26,19 @@ function webhookSecret(): string {
   return (process.env.SMARTPRO_WEBHOOK_SECRET ?? "").trim();
 }
 
+/// Compara el secreto que envía el panel de SmartPro al comprobar la conexión.
+/// El valor nunca sale de este servidor.
+export function webhookSecretMatches(received: string): boolean {
+  const secret = webhookSecret();
+  const provided = received.trim();
+
+  if (!secret || !provided || secret.length !== provided.length) {
+    return false;
+  }
+
+  return crypto.timingSafeEqual(Buffer.from(secret), Buffer.from(provided));
+}
+
 const SIGNATURE_VERSION = "v1";
 
 export type SmartProErrorBody = {

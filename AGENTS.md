@@ -60,6 +60,19 @@ Un plan que se cotiza o que publica un precio "desde" tiene `purchasable: false`
 define conversando, así que su tarjeta muestra "Solicitar cotización" y lleva al formulario, no a la
 pasarela. El servidor lo vuelve a comprobar en `/api/checkout` por si alguien fuerza el id.
 
+## Producción
+
+El proceso de Node tiene que tener `SMARTPRO_API_URL`, `SMARTPRO_SECRET_KEY`,
+`SMARTPRO_WEBHOOK_SECRET` y `SITE_URL`. Si faltan, la home sigue en línea pero sin
+planes ni portafolio: el error se traga para no tumbar el sitio.
+
+`server.js` lee `.env`, `.env.local` y `.env.production` junto al proyecto cuando
+cPanel arranca con `node server.js` y no inyecta variables. Las que ya vengan del
+panel no se pisan. Esos archivos no se suben a git.
+
+`GET /api/smartpro/health` es el diagnóstico que consulta el panel de SmartPro en
+`/dashboard/apis`. No devuelve claves.
+
 ## Desarrollo local
 
 Este sitio corre en el **3100**, que es el puerto autorizado en la credencial. Cambiar de puerto
