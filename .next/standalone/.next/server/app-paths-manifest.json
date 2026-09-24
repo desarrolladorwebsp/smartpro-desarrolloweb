@@ -2,9 +2,13 @@
   "/_not-found/page": "app/_not-found/page.js",
   "/_global-error/page": "app/_global-error/page.js",
   "/icon.svg/route": "app/icon.svg/route.js",
+  "/api/smartpro/health/route": "app/api/smartpro/health/route.js",
   "/api/contact/route": "app/api/contact/route.js",
   "/api/smartpro/webhook/route": "app/api/smartpro/webhook/route.js",
+  "/api/transbank/commit/route": "app/api/transbank/commit/route.js",
   "/api/checkout/route": "app/api/checkout/route.js",
+  "/transbank/prueba/page": "app/transbank/prueba/page.js",
   "/page": "app/page.js",
+  "/api/transbank/create/route": "app/api/transbank/create/route.js",
   "/pago/resultado/page": "app/pago/resultado/page.js"
 }

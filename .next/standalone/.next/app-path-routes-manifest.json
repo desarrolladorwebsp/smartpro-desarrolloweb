@@ -2,9 +2,13 @@
   "/_not-found/page": "/_not-found",
   "/_global-error/page": "/_global-error",
   "/icon.svg/route": "/icon.svg",
+  "/api/smartpro/health/route": "/api/smartpro/health",
   "/api/contact/route": "/api/contact",
   "/api/smartpro/webhook/route": "/api/smartpro/webhook",
+  "/api/transbank/commit/route": "/api/transbank/commit",
   "/api/checkout/route": "/api/checkout",
+  "/transbank/prueba/page": "/transbank/prueba",
   "/page": "/",
+  "/api/transbank/create/route": "/api/transbank/create",
   "/pago/resultado/page": "/pago/resultado"
 }

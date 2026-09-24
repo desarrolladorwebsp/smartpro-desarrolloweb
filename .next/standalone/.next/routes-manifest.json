@@ -54,10 +54,28 @@
       "namedRegex": "^/api/contact(?:/)?$"
     },
     {
+      "page": "/api/smartpro/health",
+      "regex": "^/api/smartpro/health(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/smartpro/health(?:/)?$"
+    },
+    {
       "page": "/api/smartpro/webhook",
       "regex": "^/api/smartpro/webhook(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/api/smartpro/webhook(?:/)?$"
+    },
+    {
+      "page": "/api/transbank/commit",
+      "regex": "^/api/transbank/commit(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/transbank/commit(?:/)?$"
+    },
+    {
+      "page": "/api/transbank/create",
+      "regex": "^/api/transbank/create(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/api/transbank/create(?:/)?$"
     },
     {
       "page": "/icon.svg",
@@ -70,6 +88,12 @@
       "regex": "^/pago/resultado(?:/)?$",
       "routeKeys": {},
       "namedRegex": "^/pago/resultado(?:/)?$"
+    },
+    {
+      "page": "/transbank/prueba",
+      "regex": "^/transbank/prueba(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/transbank/prueba(?:/)?$"
     }
   ],
   "dataRoutes": [],

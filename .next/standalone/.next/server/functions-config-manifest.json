@@ -3,6 +3,9 @@
   "functions": {
     "/api/checkout": {},
     "/api/contact": {},
-    "/api/smartpro/webhook": {}
+    "/api/smartpro/health": {},
+    "/api/smartpro/webhook": {},
+    "/api/transbank/commit": {},
+    "/api/transbank/create": {}
   }
 }
